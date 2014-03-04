@@ -9,6 +9,7 @@
 #    Reads data from hhd files and tries to fit multiple exponential 
 #    decay convoluted with irf to data
 #    Michał Parniak <mparniak@gmail.com>
+#    Univ. of Warsaw, Faculty of Physics
 #
 #    hhd read part adapted from Matlab implementation by Peter Kapusta, 
 #    PicoQuant GmbH, June 2008
@@ -326,8 +327,14 @@ irfY=np.array(irfY)
 # ask the user for additional data
 
 # number of exps to fit
-print 'give number of exponents:'
-numexp=int(sys.stdin.readline())
+print 'give number of exponents (default: 1):'
+numexp=sys.stdin.readline()
+try:
+	numexp=int(numexp)
+except:
+	numexp=1
+	print 'number of exponents defaulted to 1'
+		
 
 print 'function to fit: f(t)='
 for i in range(numexp):
@@ -341,11 +348,33 @@ p0=[]
 print 'initial conditions:'
 for i in range(numexp):
 	print 'tau_'+str(i)
-	p0.append(float(sys.stdin.readline()))
+	incorrect=True
+	while(incorrect):
+		try:	
+			p0.append(float(sys.stdin.readline()))
+		except:
+			print 'invalid value: give a number'
+		else:
+			incorrect=False
 	print 'A_'+str(i)
-	p0.append(float(sys.stdin.readline()))
+	incorrect=True
+	while(incorrect):
+		try:
+			p0.append(float(sys.stdin.readline()))
+		except:
+			print 'invalid value: give a number'
+		else:
+			incorrect=False
+			
 print 'B'
-p0.append(float(sys.stdin.readline()))
+incorrect=True
+while(incorrect):
+		try:
+			p0.append(float(sys.stdin.readline()))
+		except:
+			print 'invalid value: give a number'
+		else:
+			incorrect=False
 
 # fit
 
@@ -395,7 +424,7 @@ print 'fit data saved to '+sys.argv[2][:-4]+'_results.txt'
 plt.plot(X,Y,'o')
 # irf
 plt.plot(irfX,irfY)
-# fire results
+# fit results
 plt.plot(X,fitres)
 
 # labels
